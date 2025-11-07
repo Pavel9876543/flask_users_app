@@ -1,20 +1,9 @@
-export class UserModal {
-    constructor(modalId) {
-        this.modalElement = document.getElementById(modalId);
-        this.modalBody = this.modalElement.querySelector('#modalBody');
-        this.bsModal = new bootstrap.Modal(this.modalElement);
-    }
-
-    show(user) {
-        if (user) {
-            this.modalBody.innerHTML = `
-                <p><strong>ID:</strong> ${user.id}</p>
-                <p><strong>Имя:</strong> ${user.name}</p>
-                <p><strong>Email:</strong> ${user.email}</p>
-            `;
-        } else {
-            this.modalBody.innerHTML = `<p class="text-danger">Ошибка загрузки пользователя</p>`;
-        }
-        this.bsModal.show();
-    }
+export function showUserModal(user) {
+  document.getElementById('userDetails').innerHTML = `
+    <p><b>№</b> ${user.id}</p>
+    <p><b>Имя:</b> ${user.name}</p>
+    <p><b>Email:</b> ${user.email}</p>
+  `;
+  const modal = new bootstrap.Modal(document.getElementById('userModal'));
+  modal.show();
 }

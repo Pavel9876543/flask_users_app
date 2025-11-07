@@ -1,8 +1,20 @@
-import { UserModal } from './userModal.js';
-import { UsersTable } from './usersTable.js';
+import { Api } from './api.js';
+import { renderUsersTable } from './usersTable.js';
+import { showUserModal } from './userModal.js';
+import { setupUserForm } from './userForm.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    const modal = new UserModal('userModal');
-    const table = new UsersTable('usersTableContainer', modal);
-    table.render();
-});
+async function loadUsers() {
+  const users = await Api.getUsers();
+  renderUsersTable(users, async id => {
+    const user = await Api.getUser(id);
+    showUserModal(user);
+  });
+}
+
+async function addUser(user) {
+  await Api.addUser(user);
+  await loadUsers();
+}
+
+setupUserForm(addUser);
+loadUsers();

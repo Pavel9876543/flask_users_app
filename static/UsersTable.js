@@ -1,42 +1,24 @@
-import { Api } from './api.js';
+export function renderUsersTable(users, onUserClick) {
+  const container = document.getElementById('usersContainer');
+  if (!users.length) {
+    container.innerHTML = '<p class="text-muted">Пока нет пользователей 😢</p>';
+    return;
+  }
 
-export class UsersTable {
-    constructor(containerId, modal) {
-        this.container = document.getElementById(containerId);
-        this.modal = modal;
-    }
+  const rows = users.map(u => `
+    <tr data-id="${u.id}" class="user-row" style="cursor:pointer;">
+      <td>${u.id}</td>
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+    </tr>`).join('');
 
-    render() {
-        this.container.innerHTML = `<table class="table table-striped">
-            <thead>
-                <tr><th>№</th><th>Имя</th></tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>`;
+  container.innerHTML = `
+    <table class="table table-hover">
+      <thead><tr><th>ID</th><th>Имя</th><th>Email</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 
-        this.loadUsers();
-    }
-
-    loadUsers() {
-        const tbody = this.container.querySelector('#tableBody');
-        Api.getUsers()
-            .then(users => {
-                tbody.innerHTML = '';
-                users.forEach(user => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${user.id}</td><td>${user.name}</td>`;
-                    tr.addEventListener('click', () => this.showUserDetails(user.id));
-                    tbody.appendChild(tr);
-                });
-            })
-            .catch(err => {
-                tbody.innerHTML = `<tr><td colspan="3" class="text-danger">Ошибка: ${err.message}</td></tr>`;
-            });
-    }
-
-    showUserDetails(userId) {
-        Api.getUser(userId)
-            .then(user => this.modal.show(user))
-            .catch(err => this.modal.show(null));
-    }
+  document.querySelectorAll('.user-row').forEach(row =>
+    row.addEventListener('click', () => onUserClick(row.dataset.id))
+  );
 }
